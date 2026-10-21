@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+html { -webkit-tap-highlight-color: transparent; }
+body { @apply bg-white font-sans text-ink antialiased; }
+summary::-webkit-details-marker { display: none; }
+.prose-legal h2 { @apply mt-8 font-display text-xl font-bold text-ink; }
+.prose-legal h3 { @apply mt-5 font-semibold text-ink; }
+.prose-legal p, .prose-legal li { @apply mt-2 leading-relaxed text-ink-soft; }
+.prose-legal ul { @apply list-disc pl-5; }

@@ -2,7 +2,9 @@
 
 ## 1. Supabase (producción)
 1. Crear el proyecto (región São Paulo, la más cercana a Colombia).
-2. `npx supabase link --project-ref <ref>` y `npx supabase db push` para aplicar las migraciones.
+2. Aplicar las migraciones, de una de dos formas:
+   - **Sin compartir contraseñas:** SQL Editor → pegar `supabase/instalacion-produccion.sql` (todas las migraciones unidas; se regenera con `bash scripts/build-production-sql.sh`) → Run, una sola vez.
+   - Con la CLI: `npx supabase link --project-ref xpvqihhkhricebrcgbti` y `npx supabase db push`.
 3. Database → Extensions: verificar **pg_cron** (la migración 0011 programa el job; si no estaba habilitada, habilitarla y reejecutar 0011).
 4. Auth → URL configuration: Site URL `https://<dominio>` y redirect `https://<dominio>/auth/callback`.
 5. Auth → Email: activar "Confirm email". Configurar SMTP propio, porque el SMTP de Supabase tiene límites muy bajos.

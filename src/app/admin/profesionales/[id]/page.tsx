@@ -6,7 +6,7 @@ import { SubmitButton } from "@/components/SubmitButton";
 import { createClient } from "@/lib/supabase/server";
 import { formatCOP, formatDate, formatDateTime } from "@/lib/format";
 import { CREDENTIAL_TYPES, PROFESSIONAL_STATUS } from "@/lib/status";
-import { adminAddCredential, adminUpdateProfessional, adminUploadPhoto, approveProfessional, reactivateProfessional, rejectProfessional, reviewCredential, setUserStatus, verifyPayoutAccount, verifyRethus } from "@/app/actions/admin";
+import { toggleRow, adminAddCredential, adminUpdateProfessional, adminUploadPhoto, approveProfessional, reactivateProfessional, rejectProfessional, reviewCredential, setUserStatus, verifyPayoutAccount, verifyRethus } from "@/app/actions/admin";
 
 const CRED_STATUS = { pending: { label: "Pendiente", tone: "amber" as const }, approved: { label: "Aprobado", tone: "green" as const }, rejected: { label: "Rechazado", tone: "red" as const } };
 
@@ -17,12 +17,13 @@ export default async function AdminProfesionalDetalle({ params, searchParams }: 
   const { data: p } = await supabase.from("professional_profiles").select("*, user:users!professional_profiles_user_id_fkey(full_name, email, phone, status, created_at)").eq("user_id", id).maybeSingle();
   if (!p) notFound();
   const u = (Array.isArray(p.user) ? p.user[0] : p.user) as { full_name: string; email: string; phone: string; status: string; created_at: string };
-  const [{ data: creds }, { data: zones }, { data: account }, { data: specialties }, { data: windows }] = await Promise.all([
+  const [{ data: creds }, { data: zones }, { data: account }, { data: specialties }, { data: windows }, { data: reviews }] = await Promise.all([
     supabase.from("professional_credentials").select("*").eq("professional_id", id).order("created_at"),
     supabase.from("professional_service_areas").select("area:service_areas(name)").eq("professional_id", id),
     supabase.from("professional_payout_accounts").select("*").eq("professional_id", id).maybeSingle(),
     supabase.from("specialties").select("id, name").order("name"),
     supabase.from("professional_availability").select("weekday, start_time, end_time").eq("professional_id", id),
+    supabase.from("reviews").select("id, rating, comment, is_visible, created_at").eq("professional_id", id).order("created_at", { ascending: false }).limit(50),
   ]);
   const signed = await Promise.all((creds ?? []).map(async (c) => c.file_path ? (await supabase.storage.from("professional-documents").createSignedUrl(c.file_path, 600)).data?.signedUrl ?? null : null));
   const here = `/admin/profesionales/${id}`;
@@ -70,6 +71,20 @@ export default async function AdminProfesionalDetalle({ params, searchParams }: 
                 <div><SubmitButton size="sm" variant="outline">Agregar</SubmitButton></div>
               </form>
             </details>
+          </Card>
+
+          <Card>
+            <h2 className="font-display text-lg font-bold">Valoraciones</h2>
+            <p className="text-xs text-ink-soft">Oculta comentarios ofensivos o que expongan datos personales. El promedio público solo cuenta las visibles.</p>
+            <ul className="mt-3 divide-y divide-slate-100">
+              {reviews?.map((r) => (
+                <li key={r.id} className={`flex flex-wrap items-center justify-between gap-2 py-2 text-sm ${r.is_visible ? "" : "opacity-50"}`}>
+                  <span>{"★".repeat(r.rating)} {r.comment ?? ""} <span className="text-xs text-ink-faint">{formatDate(r.created_at, { dateStyle: "medium" })}</span></span>
+                  <form action={toggleRow}><Back to={here} /><input type="hidden" name="table" value="reviews" /><input type="hidden" name="id" value={r.id} /><input type="hidden" name="value" value={r.is_visible ? "0" : "1"} /><button className="text-xs font-semibold text-brand-700">{r.is_visible ? "Ocultar" : "Mostrar"}</button></form>
+                </li>
+              ))}
+              {!reviews?.length && <li className="py-2 text-sm text-ink-soft">Sin valoraciones.</li>}
+            </ul>
           </Card>
 
           <Card>

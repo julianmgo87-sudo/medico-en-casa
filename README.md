@@ -37,6 +37,7 @@ update public.users set role = 'admin' where email = 'tu-correo@dominio.co';
 
 | Prueba | Comando | Qué cubre |
 |---|---|---|
+| Unitarias (firma Wompi, formatos, formularios) | `npm test` | 13 pruebas |
 | Base de datos (PostgreSQL 16 limpio) | `PGHOST=… PGPORT=… npm run db:test` | Motor de precios, anti-doble reserva, pagos idempotentes, monto alterado, rechazo, reasignación, vencimientos, reembolsos, liquidación sin duplicados, libro cuadrado, RLS por rol |
 | Navegador de punta a punta | `node tests/e2e/flujo-completo.mjs` | El flujo completo en Chromium contra Supabase local: registros con confirmación de correo, carga de documentos, aprobación, membresía, reserva, webhook firmado (incluye firma inválida y evento duplicado), aceptación, servicio, calificación y liquidación |
 
@@ -48,3 +49,4 @@ La prueba de navegador usa llaves Wompi **ficticias** en `.env.local` (`WOMPI_EV
 - [docs/FINANZAS.md](docs/FINANZAS.md): precios, comisiones, libro contable, liquidaciones y reembolsos.
 - [docs/DESPLIEGUE.md](docs/DESPLIEGUE.md): Supabase, Vercel, Wompi, correo y credenciales pendientes.
 - [docs/CUMPLIMIENTO.md](docs/CUMPLIMIENTO.md): pendientes regulatorios antes de operar.
+- [docs/PENDIENTES.md](docs/PENDIENTES.md): **lista de pendientes para lanzar**.

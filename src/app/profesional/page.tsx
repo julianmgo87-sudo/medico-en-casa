@@ -72,7 +72,7 @@ export default async function ProfesionalHome({ searchParams }: { searchParams: 
           )) : <EmptyState title="No tienes solicitudes pendientes.">Las nuevas solicitudes aparecerán aquí y te avisaremos por correo.</EmptyState>}
           {next.length > 0 && <p className="text-sm"><Link href="/profesional/citas" className="font-semibold text-brand-700">Ver mis {next.length} próximas citas →</Link></p>}
         </div>
-        <NotificationsCard userId={user.id} />
+        <NotificationsCard userId={user.id} back="/profesional" />
       </div>
     </>
   );

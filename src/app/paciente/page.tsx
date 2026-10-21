@@ -34,7 +34,7 @@ export default async function PacienteHome({ searchParams }: { searchParams: Pro
             </div>
           </Card>
         </div>
-        <NotificationsCard userId={user.id} />
+        <NotificationsCard userId={user.id} back="/paciente" />
       </div>
     </>
   );

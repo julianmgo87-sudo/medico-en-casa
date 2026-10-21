@@ -2,6 +2,8 @@ import Link from "next/link";
 import { BarChart } from "@/components/BarChart";
 import { DateFilters } from "@/components/DateFilters";
 import { Card, Field, Notice, PageHeader, Select, Stat } from "@/components/ui";
+import { NotificationsCard } from "@/components/Notifications";
+import { getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { addDays, bogotaDate, formatCOP } from "@/lib/format";
 import { integrationStatus } from "@/lib/env";
@@ -28,6 +30,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
     supabase.from("service_categories").select("id, name").order("sort_order"),
   ]);
   const s = data as Stats | null;
+  const me = await getCurrentUser();
   const integ = integrationStatus();
   if (error || !s) return <Notice kind="error">No se pudieron cargar las estadísticas.</Notice>;
   const m = s.money;
@@ -105,6 +108,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
         El recaudo incluye dinero de pacientes que pertenece a los profesionales o que puede devolverse. Los ingresos propios provienen del libro contable (comisiones, cargos, membresías y penalidades) menos descuentos y costos de pasarela.
         <Link href={`/admin/reportes?desde=${from}&hasta=${to}`} className="ml-1 font-semibold text-brand-700">Ver reporte financiero y exportar CSV →</Link>
       </Card>
+      {me && <div className="mt-6"><NotificationsCard userId={me.id} back="/admin" /></div>}
     </>
   );
 }

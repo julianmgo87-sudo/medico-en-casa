@@ -255,6 +255,20 @@ otp_expiry = 3600
 # subject = "Your password has been changed"
 # content_path = "./supabase/templates/password_changed_notification.html"
 
+# Plantillas de correo en español (en producción, copiar su contenido en
+# Supabase → Authentication → Email Templates).
+[auth.email.template.confirmation]
+subject = "Confirma tu cuenta — Médico en Casa Palmira"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.recovery]
+subject = "Restablece tu contraseña — Médico en Casa Palmira"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.email_change]
+subject = "Confirma el cambio de correo — Médico en Casa Palmira"
+content_path = "./supabase/templates/email_change.html"
+
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.
 enable_signup = false

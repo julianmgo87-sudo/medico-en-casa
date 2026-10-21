@@ -326,4 +326,11 @@ begin
 end $$;
 reset role;
 
+-- ------------------------------------------------------------------ moderación de valoraciones
+select test.act_as('admin'); set role authenticated;
+update public.reviews set is_visible = false where appointment_id = test.id('a1');
+reset role;
+select test.ok((select rating_count from public.professional_profiles where user_id = test.id('pro1')) = 0, 'Ocultar una valoración recalcula el promedio público');
+select test.ok(exists (select 1 from public.audit_logs where entity_type = 'reviews' and action = 'update'), 'La moderación queda en auditoría');
+
 select 'TODAS LAS PRUEBAS PASARON';
